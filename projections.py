@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 from constants import *
 from sys import argv
 def plot_edges(ax, verts, edges, color='b'):
@@ -15,14 +14,15 @@ def plot_edges_2D(ax, verts, edges, color='b'):
         ys = [verts[i, 1]/verts[i, 2], verts[j, 1]/verts[j, 2]]
         ax.plot(xs, ys, color=color)
 def _transform(V, R):
+    assert V.shape[1] == R.shape[1]
     return (R @ V.T).T
 def transform(V, R):
     return (_transform(V[0], R), V[1])
 def _transform_project(V, R):
-    return np.delete(_transform(V, R), 2, axis=1)
+    return np.delete(_transform(V, R), (V.shape)[1]-2, axis=1)
 def transform_project(V, R):
     return (_transform_project(V[0], R), V[1])
-def _octahedra_rotates(hedron):
+def _rotates(hedron):
     fig = plt.figure(figsize=(13, 3))
     ax1 = fig.add_subplot(141, projection='3d')
     plot_edges(ax1, *hedron, color='gray')
@@ -34,7 +34,7 @@ def _octahedra_rotates(hedron):
     plot_edges(ax4, *transform(hedron, rotation_z(-45)))
     plt.tight_layout()
     plt.show()
-def _octahedra_project(hedron):
+def _project(hedron):
     fig = plt.figure(figsize=(11, 6))
     ax1 = fig.add_subplot(231, projection="3d")
     plot_edges(ax1, *hedron)
@@ -48,9 +48,32 @@ def _octahedra_project(hedron):
     plot_edges_2D(ax5, *transform_project(transform(hedron, translate_z(2)), ndc_projection(1, 10, 180, (1/1))))
     plt.tight_layout()
     plt.show()
-def octahedra_project():
-    _octahedra_project((transform((transform(transform(CUBE, rotation_x(45)), rotation_y(-15))), rotation_z(30))))
-def octahedra_rotates():
-    _octahedra_rotates(OCTAHEDRON)
-commands = {1: octahedra_rotates, 2: octahedra_project}
+def _tesseract(choron):
+    fig = plt.figure(figsize=(12, 6))
+    ax1 = fig.add_subplot(231, projection="3d")
+    hedron1 = transform_project(choron, RECT_PROJECTION_4D)
+    plot_edges(ax1, *hedron1)
+    ax2 = fig.add_subplot(232, projection="3d")
+    hedron2 = transform_project(choron, perspective_projection_4D(3))
+    plot_edges(ax2, *hedron2)
+    ax3 = fig.add_subplot(233, projection="3d")
+    hedron3 = transform_project(choron, angle_projection_4D(45, 90, 3))
+    plot_edges(ax3, *hedron3)
+    ax4 = fig.add_subplot(234)
+    plot_edges_2D(ax4, *transform_project(hedron1, RECT_PROJECTION))
+    ax5 = fig.add_subplot(235)
+    plot_edges_2D(ax5, *transform_project(hedron2, RECT_PROJECTION))
+    ax6 = fig.add_subplot(236)
+    plot_edges_2D(ax6, *transform_project(hedron3, RECT_PROJECTION))
+    plt.tight_layout()
+    plt.show()
+def project():
+    _project(transform(CUBE, rotation_x(45)@rotation_y(15)@rotation_z(30)))
+def rotates():
+    _rotates(OCTAHEDRON)
+def tesseract():
+    _tesseract(transform(TESSERACT, rotate_xw(-30)@rotate_yw(-30)@rotate_zw(-30)@rotate_xy(30)@rotate_yz(30)@rotate_xz(30)))
+def main():
+    pass
+commands = {0: main, 1: rotates, 2: project, 3: tesseract}
 commands[int(argv[1])]()

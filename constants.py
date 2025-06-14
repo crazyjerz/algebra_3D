@@ -94,7 +94,7 @@ def ndc_projection(n: float, f: float, fov: int, a: float):
     e = 1/np.tan(_rad(fov/2))
     return np.array([
         [e, 0, 0, 0],
-        [0, e/a, 0, 0],
+        [0, e*a, 0, 0],
         [0, 0, -(f+n)/(f-n), -(2*f*n)/(f-n)],
         [0, 0, -1, 0]
     ])
@@ -105,7 +105,12 @@ def translate_z(z: int):
         [0, 0, 1, z],
         [0, 0, 0, 1]
     ])
-
+ISOMETRIC_MATRIX = np.array([
+    [1/np.sqrt(6), -1/np.sqrt(6),  2/np.sqrt(6), 0],
+    [1/np.sqrt(2),  1/np.sqrt(2),  0,            0],
+    [-1/np.sqrt(3), 1/np.sqrt(3),  1/np.sqrt(3), 0],
+    [0,            0,             0,            1]
+])
 TESSERACT_VERTICES = np.array([
     [-1, -1, -1, -1,  1],
     [-1, -1, -1,  1,  1],

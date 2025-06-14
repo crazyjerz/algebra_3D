@@ -41,11 +41,13 @@ def _project(hedron):
     ax2 = fig.add_subplot(232)
     plot_edges_2D(ax2, *transform_project(hedron, RECT_PROJECTION))
     ax3 = fig.add_subplot(233)
-    plot_edges_2D(ax3, *transform_project(hedron, angle_projection(30, 2)))
+    plot_edges_2D(ax3, *transform_project(hedron, angle_projection(60, 2)))
     ax4 = fig.add_subplot(234)
-    plot_edges_2D(ax4, *transform_project(hedron, perspective_projection(1.5)))
+    plot_edges_2D(ax4, *transform_project(hedron, perspective_projection(0.5)))
     ax5 = fig.add_subplot(235)
-    plot_edges_2D(ax5, *transform_project(transform(hedron, translate_z(2)), ndc_projection(1, 10, 180, (1/1))))
+    plot_edges_2D(ax5, *transform_project(transform(hedron, translate_z(2)), ndc_projection(0, 1, 100, (16/9))))
+    ax6 = fig.add_subplot(236)
+    plot_edges_2D(ax6, *transform_project(hedron, ISOMETRIC_MATRIX))
     plt.tight_layout()
     plt.show()
 def _tesseract(choron):
@@ -57,22 +59,22 @@ def _tesseract(choron):
     hedron2 = transform_project(choron, perspective_projection_4D(3))
     plot_edges(ax2, *hedron2)
     ax3 = fig.add_subplot(233, projection="3d")
-    hedron3 = transform_project(choron, angle_projection_4D(45, 90, 3))
+    hedron3 = transform_project(choron, angle_projection_4D(45, 45, 1))
     plot_edges(ax3, *hedron3)
     ax4 = fig.add_subplot(234)
-    plot_edges_2D(ax4, *transform_project(hedron1, RECT_PROJECTION))
+    plot_edges_2D(ax4, *transform_project(hedron1, ISOMETRIC_MATRIX))
     ax5 = fig.add_subplot(235)
-    plot_edges_2D(ax5, *transform_project(hedron2, RECT_PROJECTION))
+    plot_edges_2D(ax5, *transform_project(hedron2, ISOMETRIC_MATRIX))
     ax6 = fig.add_subplot(236)
-    plot_edges_2D(ax6, *transform_project(hedron3, RECT_PROJECTION))
+    plot_edges_2D(ax6, *transform_project(hedron3, ISOMETRIC_MATRIX))
     plt.tight_layout()
     plt.show()
 def project():
-    _project(transform(CUBE, rotation_x(45)@rotation_y(15)@rotation_z(30)))
+    _project(transform(CUBE, rotation_x(45)@rotation_y(0)@rotation_z(0)))
 def rotates():
     _rotates(OCTAHEDRON)
 def tesseract():
-    _tesseract(transform(TESSERACT, rotate_xw(-30)@rotate_yw(-30)@rotate_zw(-30)@rotate_xy(30)@rotate_yz(30)@rotate_xz(30)))
+    _tesseract(transform(TESSERACT, rotate_xw(0)@rotate_yw(0)@rotate_zw(0)@rotate_xy(30)@rotate_yz(0)@rotate_xz(0)))
 def main():
     pass
 commands = {0: main, 1: rotates, 2: project, 3: tesseract}
